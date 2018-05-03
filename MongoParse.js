@@ -297,6 +297,11 @@ module.exports = (function () {
                 return arr;    // empty array
             }
             while (ch) {
+                if (ch === "]")
+                {
+                    next();
+                    return arr;
+                }
                 arr.push(value());
                 white();
                 if (ch === "]") {
@@ -325,7 +330,7 @@ module.exports = (function () {
                 return obj;    // empty object
             }
             while (ch) {
-                if (ch === "}" | ch === "]")
+                if (ch === "}")
                 {
                     next();
                     return obj;
@@ -417,4 +422,3 @@ module.exports = (function () {
             : result;
     };
 }());
-
