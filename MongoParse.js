@@ -265,7 +265,7 @@ module.exports = (function () {
             next("u");
             next("l");
             next("l");
-            return null;
+            return "null";
         case "O":
             next("O");
             next("b");
