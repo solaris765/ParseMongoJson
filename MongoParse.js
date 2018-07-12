@@ -277,9 +277,59 @@ module.exports = (function () {
             next("d");
             next("(");
             return ObjectId()
+        case "s":
+            next("s");
+            next("e");
+            next("a");
+            next("r");
+            next("c");
+            next("h");
+            next("E");
+            next("x");
+            next("p");
+            next("r");
+            next("e");
+            next("s");
+            next("s");
+            next("i");
+            next("o");
+            next("n");
+            return "{Variable: this.MatchQuery}";
+        case "y":
+            next("y");
+            next("e");
+            next("a");
+            next("r");
+            return "{Variable: this.Req.YearAsInt}"
+        case "d":
+            next("d");
+            next("e");
+            next("p");
+            next("t");
+            next("L");
+            next("o");
+            next("o");
+            next("k");
+            next("u");
+            next("p");
+            return "{Variable: this.DeptsCheck}"
         }
+        return VariableFallback();
         error("Unexpected '" + ch + "'");
     };
+
+    var VariableFallback = function() {
+        var arr = "{Variable: ";
+        while(ch) {
+            //console.log(ch);
+            if (ch === "," || ch === "}" || ch === "]") {
+                return arr + "}";
+            }
+            arr += ch;
+            next();
+            white();
+        }
+    }
 
     var value;   // Place holder for the value function.
 
