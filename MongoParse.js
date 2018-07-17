@@ -242,88 +242,119 @@ module.exports = (function () {
     var word = function () {
 
  // Parse ObjectId
-        
+        var current_word = "";
+        var wordcounter = function(ch) {
+            var cht = next();
+            if (cht === ch)
+            {
+
+            }
+            else{
+                current_word += cht;
+            }
+        }
 
  // true, false, or null.
 
-        switch (ch) {
-        case "t":
-            next("t");
-            next("r");
-            next("u");
-            next("e");
-            return true;
-        case "f":
-            next("f");
-            next("a");
-            next("l");
-            next("s");
-            next("e");
-            return false;
-        case "n":
-            next("n");
-            next("u");
-            next("l");
-            next("l");
-            return "null";
-        case "O":
-            next("O");
-            next("b");
-            next("j");
-            next("e");
-            next("c");
-            next("t");
-            next("I");
-            next("d");
-            next("(");
-            return ObjectId()
-        case "s":
-            next("s");
-            next("e");
-            next("a");
-            next("r");
-            next("c");
-            next("h");
-            next("E");
-            next("x");
-            next("p");
-            next("r");
-            next("e");
-            next("s");
-            next("s");
-            next("i");
-            next("o");
-            next("n");
-            return "{Variable: this.MatchQuery}";
-        case "y":
-            next("y");
-            next("e");
-            next("a");
-            next("r");
-            return "{Variable: this.Req.YearAsInt}"
-        case "d":
-            next("d");
-            next("e");
-            next("p");
-            next("t");
-            next("L");
-            next("o");
-            next("o");
-            next("k");
-            next("u");
-            next("p");
-            return "{Variable: this.DeptsCheck}"
-        }
-        return VariableFallback();
+        // switch (ch) {
+        // case "t":
+        //     wordcounter("t");
+        //     wordcounter("r");
+        //     wordcounter("u");
+        //     wordcounter("e");
+        //     return true;
+        // case "f":
+        //     wordcounter("f");
+        //     wordcounter("a");
+        //     wordcounter("l");
+        //     wordcounter("s");
+        //     wordcounter("e");
+        //     return false;
+        // case "n":
+        //     wordcounter("n");
+        //     wordcounter("u");
+        //     wordcounter("l");
+        //     wordcounter("l");
+        //     return "null";
+        // case "O":
+        //     wordcounter("O");
+        //     wordcounter("b");
+        //     wordcounter("j");
+        //     wordcounter("e");
+        //     wordcounter("c");
+        //     wordcounter("t");
+        //     wordcounter("I");
+        //     wordcounter("d");
+        //     wordcounter("(");
+        //     return ObjectId()
+        // case "s":
+        //     wordcounter("s");
+        //     wordcounter("e");
+        //     wordcounter("a");
+        //     wordcounter("r");
+        //     wordcounter("c");
+        //     wordcounter("h");
+        //     wordcounter("E");
+        //     wordcounter("x");
+        //     wordcounter("p");
+        //     wordcounter("r");
+        //     wordcounter("e");
+        //     wordcounter("s");
+        //     wordcounter("s");
+        //     wordcounter("i");
+        //     wordcounter("o");
+        //     wordcounter("n");
+        //     return "{Variable: this.MatchQuery}";
+        // case "y":
+        //     wordcounter("y");
+        //     wordcounter("e");
+        //     wordcounter("a");
+        //     wordcounter("r");
+        //     return "{Variable: this.Req.YearAsInt}"
+        // case "d":
+        //     wordcounter("d");
+        //     wordcounter("e");
+        //     wordcounter("p");
+        //     wordcounter("t");
+        //     wordcounter("L");
+        //     wordcounter("o");
+        //     wordcounter("o");
+        //     wordcounter("k");
+        //     wordcounter("u");
+        //     wordcounter("p");
+        //     return "{Variable: this.DeptsCheck}"
+        // }
+        return VariableFallback(current_word);
         error("Unexpected '" + ch + "'");
     };
 
-    var VariableFallback = function() {
-        var arr = "{Variable: ";
+    var VariableFallback = function(inputThing) {
+        var arr = inputThing;
+        
+        var CVar = {
+            searchExpression: "this.MatchQuery",
+            year: "this.Req.YearAsInt",
+            deptLookup: "this.DeptsCheck"
+        }
+        var builtIn = {
+            null: "null",
+            true: true,
+            false: false
+        }
+
         while(ch) {
             //console.log(ch);
             if (ch === "," || ch === "}" || ch === "]") {
-                return arr + "}";
+                if (arr in CVar) {
+                    arr = CVar[arr];
+                }
+                else if (arr in builtIn){
+                    return builtIn[arr];
+                }
+                else if (arr.indexOf("ObjectId(") != -1) {
+                    return arr.substr(8, arr.length - 1);
+                }
+                return "{Variable: " + arr + "}";
             }
             arr += ch;
             next();
